@@ -229,7 +229,6 @@ def download_indices(
     start_year: int,
     end_year: int,
     quarters: List[str],
-    skip_present_indices: bool,
     indices_folder: str,
     user_agent: str,
 ) -> None:
@@ -255,8 +254,13 @@ def download_indices(
     # Create list to store download logs
     download_logs = []
     
+    # Create logs directory if it doesn't exist
+    logs_dir = "logs"
+    if not os.path.exists(logs_dir):
+        os.makedirs(logs_dir)
+    
     # Load existing logs if present
-    log_file = os.path.join(indices_folder, "download_logs.txt")
+    log_file = os.path.join(logs_dir, "download_logs.txt")
     existing_logs = {}
     if os.path.exists(log_file):
         with open(log_file, "r", encoding="utf-8") as f:
