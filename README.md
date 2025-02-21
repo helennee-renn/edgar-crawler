@@ -179,6 +179,8 @@ Original report: [Apple 10-Q from Q1 2024](https://www.sec.gov/Archives/edgar/da
 
 ## Install
 
+
+
 - Download `EDGAR-CRAWLER` locally via SSH or HTTPS:
 ```bash
 # Method 1: SSH 
@@ -187,10 +189,10 @@ git clone https://github.com/nlpaueb/edgar-crawler.git
 # Method 2: HTTPS
 git clone git@github.com:nlpaueb/edgar-crawler.git
 ```
-
-- Then, it's recommended to create a new virtual environment using Python 3.8 by [installing and using Anaconda](https://docs.anaconda.com/anaconda/install/index.html).
+### Using conda
+- Then, it's recommended to create a new virtual environment using Python 3.8+ by [installing and using Anaconda](https://docs.anaconda.com/anaconda/install/index.html).
 ```bash
-conda create -n edgar-crawler-venv python=3.8 # After installing Anaconda, create a venv with python 3.8+
+conda create -n edgar-crawler-venv python=3.12 # After installing Anaconda, create a venv with python 3.8+
 conda activate edgar-crawler-venv # Activate the environment
 ```
 
@@ -198,6 +200,19 @@ conda activate edgar-crawler-venv # Activate the environment
 ```bash
 pip install -r requirements.txt # Install requirements for edgar-crawler
 ```
+
+### Using uv 
+
+```bash
+uv python install 3.12 # Install python 3.12 (IF NOT ALREADY INSTALLED)
+uv venv --python 3.12
+source .venv/bin/activate
+```
+
+```bash
+uv pip install -r requirements.txt  
+```
+
 
 ## Usage
 - Before running any script, you should edit the `config.json` file, which configures the behavior of our 2 modules (one for downloading the filings of your choice, the other one for getting the structured output of them). 
