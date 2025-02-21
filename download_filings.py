@@ -7,7 +7,7 @@ import re
 import shutil
 import tempfile
 import zipfile
-from datetime import date, timedelta
+from datetime import datetime
 from typing import List, Optional
 
 import pandas as pd
@@ -263,7 +263,7 @@ def download_indices(
             for line in f:
                 if line.strip():
                     filename, timestamp = line.strip().split("|")
-                    existing_logs[filename] = timestamp
+                    existing_logs[filename] = datetime.strptime(timestamp.strip(), '%Y-%m-%d %H:%M:%S')
 
     # Validate quarters
     for quarter in quarters:
@@ -282,16 +282,25 @@ def download_indices(
                     break
 
                 index_filename = f"{year}_QTR{quarter}.tsv"
+                quarter_end_date = last_day_of_quarter(year, quarter)
 
-                # Check if the index file is already present
-                if skip_present_indices and os.path.exists(
-                    os.path.join(indices_folder, index_filename)
-                ):
-                    if first_iteration:
-                        LOGGER.info(f"Skipping {index_filename}")
+                # Check if we need to download/update the file
+                should_download = True
+                if index_filename in existing_logs:
+                    download_date = existing_logs[index_filename]
+                    if download_date.strftime("%Y-%m-%d") >= quarter_end_date.strftime("%Y-%m-%d"):
+                        if first_iteration:
+                            LOGGER.info(f"Skipping {index_filename} - already up to date")
+                        should_download = False
+                    elif download_date.strftime("%Y-%m-%d") < quarter_end_date.strftime("%Y-%m-%d") and download_date.strftime("%Y-%m-%d") == datetime.now().strftime("%Y-%m-%d"):
+                        if first_iteration:
+                            LOGGER.info(f"Skipping {index_filename} - already up to date")
+                        should_download = False
+
+                if not should_download:
                     continue
 
-                # If not, download the index file
+                # Download the index file
                 url = f"{base_url}/{year}/QTR{quarter}/master.zip"
 
                 # Retry the download in case of failures
@@ -332,7 +341,7 @@ def download_indices(
                         LOGGER.info(f"{index_filename} downloaded")
                         
                     # Update logs for this file
-                    existing_logs[index_filename] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                    existing_logs[index_filename] = datetime.now()
 
         first_iteration = False
         # Handle failed downloads
@@ -350,7 +359,7 @@ def download_indices(
     if existing_logs:
         with open(log_file, "w", encoding="utf-8") as f:
             for filename, timestamp in existing_logs.items():
-                f.write(f"{filename}|{timestamp}\n")
+                f.write(f"{filename}|{timestamp.strftime('%Y-%m-%d %H:%M:%S')}\n")
         LOGGER.info(f"Download logs updated in {log_file}")
 
 
