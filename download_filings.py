@@ -246,9 +246,22 @@ def download_indices(
             ValueError: If an invalid quarter is passed.
     """
 
-    base_url = "https://www.sec.gov/Archives/edgar/full-index/"
+    base_url = "https://www.sec.gov/Archives/edgar/full-index"
 
     LOGGER.info("Downloading index files from SEC...")
+
+    # Create list to store download logs
+    download_logs = []
+    
+    # Load existing logs if present
+    log_file = os.path.join(indices_folder, "download_logs.txt")
+    existing_logs = {}
+    if os.path.exists(log_file):
+        with open(log_file, "r", encoding="utf-8") as f:
+            for line in f:
+                if line.strip():
+                    filename, timestamp = line.strip().split("|")
+                    existing_logs[filename] = timestamp
 
     # Validate quarters
     for quarter in quarters:
@@ -307,13 +320,17 @@ def download_indices(
                         ]
 
                     # Save the processed index file
+                    file_path = os.path.join(indices_folder, index_filename)
                     with open(
-                        os.path.join(indices_folder, index_filename),
+                        file_path,
                         "w+",
                         encoding="utf-8",
                     ) as f:
                         f.write("".join(lines))
                         LOGGER.info(f"{index_filename} downloaded")
+                        
+                    # Update logs for this file
+                    existing_logs[index_filename] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
         first_iteration = False
         # Handle failed downloads
@@ -326,6 +343,13 @@ def download_indices(
                 break
         else:
             break
+
+    # Save updated logs to text file
+    if existing_logs:
+        with open(log_file, "w", encoding="utf-8") as f:
+            for filename, timestamp in existing_logs.items():
+                f.write(f"{filename}|{timestamp}\n")
+        LOGGER.info(f"Download logs updated in {log_file}")
 
 
 def get_specific_indices(
