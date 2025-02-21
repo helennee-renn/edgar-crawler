@@ -7,7 +7,7 @@ import re
 import shutil
 import tempfile
 import zipfile
-from datetime import datetime
+from datetime import date, timedelta
 from typing import List, Optional
 
 import pandas as pd
@@ -25,6 +25,7 @@ from tqdm import tqdm
 from urllib3.util import Retry
 
 from logger import Logger
+from helpers import last_day_of_quarter
 
 # Python version compatibility for HTML parser
 try:
@@ -49,6 +50,7 @@ LOGGER = Logger(
 
 # Log where the logs are being saved
 LOGGER.info(f"Saving log to {os.path.join(LOGGING_DIR)}\n")
+
 
 
 def main():
