@@ -184,10 +184,10 @@ Original report: [Apple 10-Q from Q1 2024](https://www.sec.gov/Archives/edgar/da
 - Download `EDGAR-CRAWLER` locally via SSH or HTTPS:
 ```bash
 # Method 1: SSH 
-git clone https://github.com/nlpaueb/edgar-crawler.git 
+git clone https://github.com/helennee-renn/edgar-crawler.git
 
 # Method 2: HTTPS
-git clone git@github.com:nlpaueb/edgar-crawler.git
+git git@github.com:helennee-renn/edgar-crawler.git
 ```
 ### Using conda
 - Then, it's recommended to create a new virtual environment using Python 3.8+ by [installing and using Anaconda](https://docs.anaconda.com/anaconda/install/index.html).
