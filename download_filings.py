@@ -108,7 +108,6 @@ def main():
         start_year=config["start_year"],
         end_year=config["end_year"],
         quarters=config["quarters"],
-        skip_present_indices=config["skip_present_indices"],
         indices_folder=indices_folder,
         user_agent=config["user_agent"],
     )
@@ -564,6 +563,11 @@ def crawl(
         if form.attrs["class"][0] == "infoHead" and form.text == "Period of Report":
             period_of_report = form.nextSibling.nextSibling.text
             series["Period of Report"] = period_of_report
+            
+        else:
+            period_of_report = series["Filing Date"]
+            series["Period of Report"] =  period_of_report
+            
 
     if period_of_report is None:
         LOGGER.debug(f'Can not crawl "Period of Report" for {html_index}')
